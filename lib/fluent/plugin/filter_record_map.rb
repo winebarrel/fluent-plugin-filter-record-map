@@ -19,20 +19,10 @@ module Fluent
       @context = Context.new
     end
 
-    def filter_stream(tag, es)
-      result_es = Fluent::MultiEventStream.new
-
-      es.each do |time, record|
-        bind = @context.context(tag, record)
-        eval(@map, bind)
-        new_record = eval('new_record', bind)
-        result_es.add(time, new_record)
-      end
-
-      result_es
-    rescue => e
-      log.warn e.message
-      log.warn e.backtrace.join(', ')
+    def filter(tag, time, record)
+      bind = @context.context(tag, record)
+      eval(@map, bind)
+      eval('new_record', bind)
     end
   end
 end
