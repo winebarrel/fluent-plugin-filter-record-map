@@ -60,6 +60,20 @@ $ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
 #=> 2015-01-01 23:34:45 +0900 test.data: {"foo":"foo.bar","bar":"bar.zoo"}
 ```
 
+### Example3
+
+```apache
+<filter>
+  type record_map
+  map new_record = {"new_foo" => record["foo"]}
+</filter>
+```
+
+```sh
+$ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
+#=> 2015-01-01 23:34:45 +0900 test.data: {"new_foo":"bar"}
+```
+
 ### Use `tag`, `tag_parts`
 
 ```apache
