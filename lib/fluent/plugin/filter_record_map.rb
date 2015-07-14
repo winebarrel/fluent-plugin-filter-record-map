@@ -13,9 +13,8 @@ module Fluent
     end
 
     class Context
-      def context(tag, record)
+      def context(tag, record, hostname)
         tag_parts = tag.split('.')
-        hostname = Socket.gethostname
         new_record = {}
         binding
       end
@@ -25,6 +24,7 @@ module Fluent
       super
       @context = Context.new
       @maps = []
+      @hostname = Socket.gethostname
 
       PARAM_INDICES.each do |i|
         expr = instance_variable_get("@map#{i}")
@@ -33,7 +33,7 @@ module Fluent
     end
 
     def filter(tag, time, record)
-      bind = @context.context(tag, record)
+      bind = @context.context(tag, record, @hostname)
 
       @maps.each do |expr|
         eval(expr, bind)
