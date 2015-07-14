@@ -14,11 +14,17 @@ RSpec.configure do |config|
 end
 
 def create_driver(options = {})
+  tag = options.delete(:tag) || 'test.default'
+
   fluentd_conf = <<-EOS
 type object_flatten
-map #{options.fetch(:map)}
   EOS
 
-  tag = options[:tag] || 'test.default'
+  options.each do |key, value|
+    fluentd_conf << <<-EOS
+#{key} #{value}
+    EOS
+  end
+
   Fluent::Test::FilterTestDriver.new(Fluent::RecordMapFilter, tag).configure(fluentd_conf)
 end

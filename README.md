@@ -26,7 +26,9 @@ Or install it yourself as:
 ```apache
 <filter>
   type record_map
-  map new_record["new_foo"] = record["foo"]; new_record["new_bar"] = record["bar"]
+  # map1: required
+  map1 new_record["new_foo"] = record["foo"]
+  map2 new_record["new_bar"] = record["bar"]
 </filter>
 ```
 
@@ -37,7 +39,8 @@ Or install it yourself as:
 ```apache
 <filter>
   type record_map
-  map new_record["new_foo"] = record["foo"].upcase; new_record["new_bar"] = record["bar"].upcase
+  map1 new_record["new_foo"] = record["foo"].upcase
+  map2 new_record["new_bar"] = record["bar"].upcase
 </filter>
 ```
 
@@ -51,7 +54,7 @@ $ echo '{"foo":"bar", "bar":"zoo"})' | fluentd test.data
 ```apache
 <filter>
   type record_map
-  map record.each {|k, v| new_record[k] = k + "." + v }
+  map1 record.each {|k, v| new_record[k] = k + "." + v }
 </filter>
 ```
 
@@ -65,7 +68,7 @@ $ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
 ```apache
 <filter>
   type record_map
-  map new_record = {"new_foo" => record["foo"]}
+  map1 new_record = {"new_foo" => record["foo"]}
 </filter>
 ```
 
@@ -79,11 +82,26 @@ $ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
 ```apache
 <filter>
   type record_map
-  map new_record["tag"] = tag; new_record["new_foo"] = tag_parts[1] + "." + record["foo"]
+  map1 new_record["tag"] = tag
+  map2 new_record["new_foo"] = tag_parts[1] + "." + record["foo"]
 </filter>
 ```
 
 ```sh
 $ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
 #=> 2015-01-01 23:34:45 +0900 test.data: {"tag":"test.data","new_foo":"data.foo"}
+```
+
+### Use `hostname`
+
+```apache
+<filter>
+  type record_map
+  map1 new_record["hostname"] = hostname
+</filter>
+```
+
+```sh
+$ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
+#=> 2015-01-01 23:34:45 +0900 test.data: {"hostname":"my-host"}
 ```

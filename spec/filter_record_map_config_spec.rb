@@ -6,10 +6,16 @@ describe 'Fluent::RecordMapFilter#configure' do
 
   let(:fluentd_conf) do |example|
     param = example.full_description.split(/\s+/)[1]
-    {param.to_sym => example.example_group.description }
+    {map1: 'record'}.merge(param.to_sym => example.example_group.description)
   end
 
-  describe 'map' do
+  describe 'map1' do
+    context 'new_record["new_foo"] = record["foo"].upcase; new_record["bar"] = 100' do
+      it { is_expected.to eq 'new_record["new_foo"] = record["foo"].upcase; new_record["bar"] = 100' }
+    end
+  end
+
+  describe 'map2' do
     context 'new_record["new_foo"] = record["foo"].upcase; new_record["bar"] = 100' do
       it { is_expected.to eq 'new_record["new_foo"] = record["foo"].upcase; new_record["bar"] = 100' }
     end
