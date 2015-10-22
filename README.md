@@ -101,6 +101,15 @@ $ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
 </filter>
 ```
 
+### Use `time`
+
+```apache
+<filter>
+  type record_map
+  map1 new_record["time"] = time.strftime("%Y-%m-%d")
+</filter>
+```
+
 ```sh
 $ echo '{"foo":"bar", "bar":"zoo"}' | fluent-cat test.data
 #=> 2015-01-01 23:34:45 +0900 test.data: {"hostname":"my-host"}

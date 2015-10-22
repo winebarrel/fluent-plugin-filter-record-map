@@ -1,6 +1,7 @@
 describe Fluent::RecordMapFilter do
   let(:driver) { create_driver(fluentd_conf) }
-  let(:time) { Time.parse('2015/05/24 18:30 UTC').to_i }
+  let(:today) { Time.parse('2015/05/24 18:30 UTC') }
+  let(:time) { today.to_i }
 
   let(:records) do
     [
@@ -10,6 +11,7 @@ describe Fluent::RecordMapFilter do
   end
 
   before do
+    Timecop.freeze(today)
     allow(Socket).to receive(:gethostname) { 'my-host' }
 
     records.each do |record|
@@ -67,6 +69,15 @@ describe Fluent::RecordMapFilter do
         is_expected.to eq [
           ["test.default", time, {"hostname"=>"my-host"}],
           ["test.default", time, {"hostname"=>"my-host"}]
+        ]
+      end
+    end
+
+    context 'new_record["time"] = time.strftime("%Y-%m")' do
+      it do
+        is_expected.to eq [
+          ["test.default", time, {"time"=>"2015-05"}],
+          ["test.default", time, {"time"=>"2015-05"}]
         ]
       end
     end

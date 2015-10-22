@@ -13,8 +13,9 @@ module Fluent
     end
 
     class Context
-      def context(tag, record, hostname)
+      def context(tag, time, record, hostname)
         tag_parts = tag.split('.')
+        time = Time.at(time)
         new_record = {}
         binding
       end
@@ -33,7 +34,7 @@ module Fluent
     end
 
     def filter(tag, time, record)
-      bind = @context.context(tag, record, @hostname)
+      bind = @context.context(tag, time, record, @hostname)
 
       @maps.each do |expr|
         eval(expr, bind)
